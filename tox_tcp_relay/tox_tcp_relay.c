@@ -528,8 +528,8 @@ Tox *create_tox()
 	tox_options_default(&options);
 
 	// ----------------------------------------------
-	uint16_t tcp_port = 448; // act as TCP relay
-	dbg(0, "TCP relay port: 448\n");
+	uint16_t tcp_port = 33447; // act as TCP relay
+	dbg(0, "TCP relay port: 33447\n");
 	// uint16_t tcp_port = 0; // DON'T act as TCP relay
 	// ----------------------------------------------
 
