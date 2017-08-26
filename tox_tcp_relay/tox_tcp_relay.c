@@ -73,8 +73,8 @@ static struct v4lconvert_data *v4lconvert_data;
 // ----------- version -----------
 #define VERSION_MAJOR 0
 #define VERSION_MINOR 99
-#define VERSION_PATCH 10
-static const char global_version_string[] = "0.99.10";
+#define VERSION_PATCH 1
+static const char global_version_string[] = "0.99.1";
 // ----------- version -----------
 // ----------- version -----------
 
@@ -250,7 +250,7 @@ void set_color_in_yuv_frame_xy(uint8_t *yuv_frame, int px_x, int px_y, int frame
 
 const char *savedata_filename = "savedata.tox";
 const char *savedata_tmp_filename = "savedata.tox.tmp";
-const char *log_filename = "toxcam.log";
+const char *log_filename = "tox_tcp_relay.log";
 const char *my_avatar_filename = "avatar.png";
 
 char *v4l2_device; // video device filename
@@ -528,8 +528,9 @@ Tox *create_tox()
 	tox_options_default(&options);
 
 	// ----------------------------------------------
-	// uint16_t tcp_port = 33445; // act as TCP relay
-	uint16_t tcp_port = 0; // DON'T act as TCP relay
+	uint16_t tcp_port = 443; // act as TCP relay
+	dbg(0, "TCP relay port: 443\n");
+	// uint16_t tcp_port = 0; // DON'T act as TCP relay
 	// ----------------------------------------------
 
 	// ----------------------------------------------
@@ -1579,16 +1580,16 @@ void cmd_stats(Tox *tox, uint32_t friend_number)
 	switch (my_connection_status)
 	{
 		case TOX_CONNECTION_NONE:
-			send_text_message_to_friend(tox, friend_number, "toxcam status:offline");
+			send_text_message_to_friend(tox, friend_number, "tox_tcp_relay status:offline");
 			break;
 		case TOX_CONNECTION_TCP:
-			send_text_message_to_friend(tox, friend_number, "toxcam status:Online, using TCP");
+			send_text_message_to_friend(tox, friend_number, "tox_tcp_relay status:Online, using TCP");
 			break;
 		case TOX_CONNECTION_UDP:
-			send_text_message_to_friend(tox, friend_number, "toxcam status:Online, using UDP");
+			send_text_message_to_friend(tox, friend_number, "tox_tcp_relay status:Online, using UDP");
 			break;
 		default:
-			send_text_message_to_friend(tox, friend_number, "toxcam status:*unknown*");
+			send_text_message_to_friend(tox, friend_number, "tox_tcp_relay status:*unknown*");
 			break;
 	}
 
@@ -3861,7 +3862,7 @@ int main(int argc, char *argv[])
         global_video_bit_rate = DEFAULT_GLOBAL_VID_BITRATE;
         break;
       case 'v':
-         printf("ToxCam version: %s\n", global_version_string);
+         printf("Tox TCP-Relay version: %s\n", global_version_string);
             if (logfile)
             {
                 fclose(logfile);
@@ -3929,17 +3930,17 @@ int main(int argc, char *argv[])
     print_tox_id(tox);
 
     // init callbacks ----------------------------------
-    tox_callback_friend_request(tox, friend_request_cb);
-    tox_callback_friend_message(tox, friend_message_cb);
-    tox_callback_friend_connection_status(tox, friendlist_onConnectionChange);
-	tox_callback_friend_status(tox, on_tox_friend_status);
+    // tox_callback_friend_request(tox, friend_request_cb);
+    // tox_callback_friend_message(tox, friend_message_cb);
+    // tox_callback_friend_connection_status(tox, friendlist_onConnectionChange);
+	// tox_callback_friend_status(tox, on_tox_friend_status);
 
-    tox_callback_self_connection_status(tox, self_connection_status_cb);
+    // tox_callback_self_connection_status(tox, self_connection_status_cb);
 
-    tox_callback_file_chunk_request(tox, on_file_chunk_request);
-    tox_callback_file_recv_control(tox, on_file_control);
-    tox_callback_file_recv(tox, on_file_recv);
-    tox_callback_file_recv_chunk(tox, on_file_recv_chunk);
+    // tox_callback_file_chunk_request(tox, on_file_chunk_request);
+    // tox_callback_file_recv_control(tox, on_file_control);
+    // tox_callback_file_recv(tox, on_file_recv);
+    // tox_callback_file_recv_chunk(tox, on_file_recv_chunk);
     // init callbacks ----------------------------------
 
 
@@ -3989,11 +3990,11 @@ int main(int argc, char *argv[])
 	memset(&mytox_CC, 0, sizeof(CallControl));
 
     // init AV callbacks -------------------------------
-    toxav_callback_call(mytox_av, t_toxav_call_cb, &mytox_CC);
-    toxav_callback_call_state(mytox_av, t_toxav_call_state_cb, &mytox_CC);
-    toxav_callback_bit_rate_status(mytox_av, t_toxav_bit_rate_status_cb, &mytox_CC);
-    toxav_callback_video_receive_frame(mytox_av, t_toxav_receive_video_frame_cb, &mytox_CC);
-    toxav_callback_audio_receive_frame(mytox_av, t_toxav_receive_audio_frame_cb, &mytox_CC);
+    // toxav_callback_call(mytox_av, t_toxav_call_cb, &mytox_CC);
+    // toxav_callback_call_state(mytox_av, t_toxav_call_state_cb, &mytox_CC);
+    // toxav_callback_bit_rate_status(mytox_av, t_toxav_bit_rate_status_cb, &mytox_CC);
+    // toxav_callback_video_receive_frame(mytox_av, t_toxav_receive_video_frame_cb, &mytox_CC);
+    // toxav_callback_audio_receive_frame(mytox_av, t_toxav_receive_audio_frame_cb, &mytox_CC);
     // init AV callbacks -------------------------------
 
 
