@@ -589,6 +589,7 @@ Tox *create_tox()
 	bool local_discovery_enabled = tox_options_get_local_discovery_enabled(&options);
 	dbg(9, "local discovery enabled = %d\n", (int)local_discovery_enabled);
 
+	dbg(9, "tox = %p\n", tox);
     return tox;
 }
 
@@ -3915,10 +3916,10 @@ int main(int argc, char *argv[])
 	Tox *tox = create_tox();
 	global_start_time = time(NULL);
 
-    const char *name = "ToxCam";
+    const char *name = "ToxTCP-Relay";
     tox_self_set_name(tox, (uint8_t *)name, strlen(name), NULL);
 
-    const char *status_message = "This is your ToxCam";
+    const char *status_message = "Tox TCP Relay Node";
     tox_self_set_status_message(tox, (uint8_t *)status_message, strlen(status_message), NULL);
 
     Friends.max_idx = 0;
