@@ -577,13 +577,17 @@ Tox *create_tox()
         options.savedata_data = savedata;
         options.savedata_length = fsize;
 
-        tox = tox_new(&options, NULL);
+		TOX_ERR_NEW error;
+        tox = tox_new(&options, &error);
+		dbg(9, "tox_new1:TOX_ERR_NEW = %d\n", (int)error);
 
         free((void *)savedata);
     }
 	else
 	{
-        tox = tox_new(&options, NULL);
+		TOX_ERR_NEW error;
+        tox = tox_new(&options, &error);
+		dbg(9, "tox_new2:TOX_ERR_NEW = %d\n", (int)error);
     }
 
 	bool local_discovery_enabled = tox_options_get_local_discovery_enabled(&options);
