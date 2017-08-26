@@ -297,7 +297,7 @@ uint32_t friend_to_send_video_to = -1;
 // -- hardcoded --
 // -- hardcoded --
 
-int video_call_enabled = 1;
+int video_call_enabled = 0;
 
 TOX_CONNECTION my_connection_status = TOX_CONNECTION_NONE;
 FILE *logfile = NULL;
@@ -3195,95 +3195,7 @@ void *thread_av(void *data)
 
     while (toxav_iterate_thread_stop != 1)
 	{
-		if (global_video_active == 1)
-		{
-			pthread_mutex_lock(&av_thread_lock);
-
-			// dbg(9, "AV Thread #%d:get frame\n", (int) id);
-
-            // capturing is enabled, capture frames
-            int r = v4l_getframe(av_video_frame.y, av_video_frame.u, av_video_frame.v,
-					av_video_frame.w, av_video_frame.h);
-
-			if (r == 1)
-			{
-
-				if (global_send_first_frame > 0)
-				{
-					black_yuf_frame_xy();
-					global_send_first_frame--;
-				}
-
-				// "0" -> [48]
-				// "9" -> [57]
-				// ":" -> [58]
-
-				char* date_time_str = get_current_time_date_formatted();
-				if (date_time_str)
-				{
-
-					text_on_yuf_frame_xy(10, 10, date_time_str);
-					free(date_time_str);
-				}
-
-
-				blinking_dot_on_frame_xy(20, 30, &global_blink_state);
-
-				if (friend_to_send_video_to != -1)
-				{
-					// dbg(9, "AV Thread #%d:send frame to friend num=%d\n", (int) id, (int)friend_to_send_video_to);
-
-					TOXAV_ERR_SEND_FRAME error = 0;
-					toxav_video_send_frame(av, friend_to_send_video_to, av_video_frame.w, av_video_frame.h,
-						   av_video_frame.y, av_video_frame.u, av_video_frame.v, &error);
-
-					if (error)
-					{
-						if (error == TOXAV_ERR_SEND_FRAME_SYNC)
-						{
-							//debug_notice("uToxVideo:\tVid Frame sync error: w=%u h=%u\n", av_video_frame.w,
-							//			 av_video_frame.h);
-							dbg(0, "TOXAV_ERR_SEND_FRAME_SYNC\n");
-						}
-						else if (error == TOXAV_ERR_SEND_FRAME_PAYLOAD_TYPE_DISABLED)
-						{
-							//debug_error("uToxVideo:\tToxAV disagrees with our AV state for friend %lu, self %u, friend %u\n",
-							//	i, friend[i].call_state_self, friend[i].call_state_friend);
-							dbg(0, "TOXAV_ERR_SEND_FRAME_PAYLOAD_TYPE_DISABLED\n");
-						}
-						else
-						{
-							//debug_error("uToxVideo:\ttoxav_send_video error friend: %i error: %u\n",
-							//			friend[i].number, error);
-							dbg(0, "ToxVideo:toxav_send_video error %u\n", error);
-
-							// *TODO* if these keep piling up --> just disconnect the call!!
-							// *TODO* if these keep piling up --> just disconnect the call!!
-							// *TODO* if these keep piling up --> just disconnect the call!!
-						}
-					}
-				}
-
-            }
-			else if (r == -1)
-			{
-                // debug_error("uToxVideo:\tErr... something really bad happened trying to get this frame, I'm just going "
-                //            "to plots now!\n");
-                //video_device_stop();
-                //close_video_device(video_device);
-				dbg(0, "ToxVideo:something really bad happened trying to get this frame\n");
-            }
-
-            pthread_mutex_unlock(&av_thread_lock);
-			// yieldcpu(1000); // 1 frame every 1 seconds!!
-            yieldcpu(DEFAULT_FPS_SLEEP_MS); /* ~4 frames per second */
-            // yieldcpu(80); /* ~12 frames per second */
-            // yieldcpu(40); /* 60fps = 16.666ms || 25 fps = 40ms || the data quality is SO much better at 25... */
-		}
-		else
-		{
-			yieldcpu(100);
-		}
+		yieldcpu(1000);
     }
 
 
