@@ -20,6 +20,7 @@ machine:
     RASPI_PKGSDIR: "/home/ubuntu/pkgs/"
 ## ----------- RASPI cross compile ----------------
     # ---------------------------------------------------
+    # v0.1.10 mobtweaks f73b345c21fae0e0e56fae86dc82f63188a00aca
     # c-toxcore v0.1.9 a429ef4a28a5e5e0ad010efffb76d2abc3ada0af
     # c-toxcore v0.1.8 f6db9333e2d1262e7ba3846563c30f63c98ffa38
     # c-toxcore v0.1.7 48c86e942d487a8856cbd25797b320bfb1879ddc
@@ -30,7 +31,10 @@ machine:
     # c-toxcore v0.1.2 a096c71db867ac83fc3e01e0fbe98573d20f9286
     # ---------------------------------------------------
     # c-toxcore v0.1.9
-    CTOXCORE_VERSION_HASH: a429ef4a28a5e5e0ad010efffb76d2abc3ada0af
+    CTOXCORE_VERSION_HASH: f73b345c21fae0e0e56fae86dc82f63188a00aca
+    # c-toxcore repo url
+    # CTOXCORE_URL: "https://github.com/TokTok/c-toxcore"
+    CTOXCORE_URL: "https://github.com/zoff99/c-toxcore"
     LIBSODIUM_VERSION: "tags/1.0.12"
     LIBSODIUM_BRANCH: "1.0.12"
     RASPBERRRY_TOOLS_HASH: d820ab9c21969013b4e56c7e9cba25518afcdd44
@@ -63,7 +67,7 @@ dependencies:
     - git submodule add --force https://github.com/jedisct1/libsodium libsodium ; echo ok
     - git submodule init ; git submodule update ; echo ok
     # -- sometimes submodule can't find commit hash, whatever ------
-    - rm -Rf c-toxcore ; git clone https://github.com/TokTok/c-toxcore
+    - rm -Rf c-toxcore ; git clone "$CTOXCORE_URL"
     # -- sometimes submodule can't find commit hash, whatever ------
     - cd c-toxcore/ ; git checkout $CTOXCORE_VERSION_HASH
     - cd libsodium/ ; git checkout $LIBSODIUM_VERSION
@@ -165,7 +169,7 @@ dependencies:
     - . ~/pp;cd "$_SYSROOT_" ; tar -xzvf ~/pkg1.tgz
     # install raspi binary pkgs -------------------------
 
-    - . ~/pp;cd $_s_;git clone https://github.com/TokTok/c-toxcore
+    - . ~/pp;cd $_s_;git clone "$CTOXCORE_URL"
     - . ~/pp;cd $_s_/c-toxcore/;git checkout $CTOXCORE_VERSION_HASH
     - . ~/pp;cd $_s_/c-toxcore/;autoreconf -fi
     - . ~/pp;~/do_compile.sh "c-toxcore" --prefix="$_SYSROOT_"/usr --enable-logging --disable-soname-versions --host="$_TOOL_PREFIX" --with-sysroot="$_SYSROOT_" --disable-testing --disable-rt
@@ -185,34 +189,34 @@ dependencies:
     - . ~/pp;cp -av /home/ubuntu/build/build/.libs/tox-bootstrapd $CIRCLE_ARTIFACTS/"${CUR_ARCH_}"/ ; exit 0
     # --- toxbootstrapd for RASPI ----
 
-    - cd toxcam ; rm -fv toxcam toxcam_static
-    - cd toxcam ; . ~/pp ; $CC -O2 -fPIC -o toxcam toxcam.c -std=gnu99 -I"$_SYSROOT_"/usr/local/include/ -L"$_SYSROOT_"/usr/lib/arm-linux-gnueabihf/ -lsodium -ltoxcore -ltoxav -lpthread -lvpx -ljpeg -lv4lconvert # -lasound
-    - cd toxcam ; ldd toxcam ; exit 0
-    - cd toxcam ; find . -name '*toxcam*' -exec ls -al {} \; 2> /dev/null ; exit 0
-    - cd toxcam ; . ~/pp ; $CC -O2 -Wall -Wextra -Wpedantic -o toxcam_static toxcam.c -static -std=gnu99 -L"$_SYSROOT_"/usr/lib/arm-linux-gnueabihf/ -I"$_SYSROOT_"/usr/lib/arm-linux-gnueabihf/ -lsodium -ltoxcore -ltoxav -lsodium -lpthread -static-libgcc -static-libstdc++ -lopus -lvpx -lm -lpthread -lv4lconvert -ljpeg -lm -lrt # -lasound
-    - cd toxcam ; ls -al toxcam toxcam_static
-    - cd toxcam ;. ~/pp ; cp -av ./toxcam $CIRCLE_ARTIFACTS/"${CUR_ARCH_}"/
-    - cd toxcam ;. ~/pp ; cp -av ./toxcam_static $CIRCLE_ARTIFACTS/"${CUR_ARCH_}"/
+    - cd tox_tcp_relay ; rm -fv tox_tcp_relay tox_tcp_relay_static
+    - cd tox_tcp_relay ; . ~/pp ; $CC -O2 -fPIC -o tox_tcp_relay tox_tcp_relay.c -std=gnu99 -I"$_SYSROOT_"/usr/local/include/ -L"$_SYSROOT_"/usr/lib/arm-linux-gnueabihf/ -lsodium -ltoxcore -ltoxav -lpthread -lvpx -ljpeg -lv4lconvert
+    - cd tox_tcp_relay ; ldd tox_tcp_relay ; exit 0
+    - cd tox_tcp_relay ; find . -name '*tox_tcp_relay*' -exec ls -al {} \; 2> /dev/null ; exit 0
+    - cd tox_tcp_relay ; . ~/pp ; $CC -O2 -Wall -Wextra -Wpedantic -o tox_tcp_relay_static tox_tcp_relay.c -static -std=gnu99 -L"$_SYSROOT_"/usr/lib/arm-linux-gnueabihf/ -I"$_SYSROOT_"/usr/lib/arm-linux-gnueabihf/ -lsodium -ltoxcore -ltoxav -lsodium -lpthread -static-libgcc -static-libstdc++ -lopus -lvpx -lm -lpthread -lv4lconvert -ljpeg -lm -lrt
+    - cd tox_tcp_relay ; ls -al tox_tcp_relay tox_tcp_relay_static
+    - cd tox_tcp_relay ;. ~/pp ; cp -av ./tox_tcp_relay $CIRCLE_ARTIFACTS/"${CUR_ARCH_}"/
+    - cd tox_tcp_relay ;. ~/pp ; cp -av ./tox_tcp_relay_static $CIRCLE_ARTIFACTS/"${CUR_ARCH_}"/
 
 ## ----------- RASPI cross compile ----------------
 
 
 test:
   override:
-    - cd toxcam ; rm -fv toxcam toxcam_static
-    - cd toxcam ; gcc -O2 -fPIC -o toxcam toxcam.c -std=gnu99 -lsodium -I/usr/local/include/ -ltoxcore -ltoxav -lpthread -lvpx -lv4lconvert # -lasound
-    - cd toxcam ; ldd toxcam ; exit 0
+    - cd tox_tcp_relay ; rm -fv tox_tcp_relay tox_tcp_relay_static
+    - cd tox_tcp_relay ; gcc -O2 -fPIC -o tox_tcp_relay tox_tcp_relay.c -std=gnu99 -lsodium -I/usr/local/include/ -ltoxcore -ltoxav -lpthread -lvpx -lv4lconvert
+    - cd tox_tcp_relay ; ldd tox_tcp_relay ; exit 0
     - find / -name '*libjpeg*' 2> /dev/null ; exit 0
-    - cd toxcam ; gcc -O2 -Wall -Wextra -Wpedantic -o toxcam_static toxcam.c -static -std=gnu99 -L/usr/local/lib -I/usr/local/include/ -lsodium -ltoxcore -ltoxav -ltoxgroup -ltoxmessenger -ltoxfriends -ltoxnetcrypto -ltoxdht -ltoxnetwork -ltoxcrypto -lsodium -lpthread -static-libgcc -static-libstdc++ -lopus -lvpx -lm -lpthread -lv4lconvert -ljpeg -lm -lrt # -lasound
-    - cd toxcam ; ls -al toxcam toxcam_static
+    - cd tox_tcp_relay ; gcc -O2 -Wall -Wextra -Wpedantic -o tox_tcp_relay_static tox_tcp_relay.c -static -std=gnu99 -L/usr/local/lib -I/usr/local/include/ -lsodium -ltoxcore -ltoxav -ltoxgroup -ltoxmessenger -ltoxfriends -ltoxnetcrypto -ltoxdht -ltoxnetwork -ltoxcrypto -lsodium -lpthread -static-libgcc -static-libstdc++ -lopus -lvpx -lm -lpthread -lv4lconvert -ljpeg -lm -lrt
+    - cd tox_tcp_relay ; ls -al tox_tcp_relay tox_tcp_relay_static
     - mkdir -p $CIRCLE_ARTIFACTS/ubuntu_14_04_binaries/
-    - cp -av toxcam/toxcam $CIRCLE_ARTIFACTS/ubuntu_14_04_binaries/
-    - cp -av toxcam/toxcam_static $CIRCLE_ARTIFACTS/ubuntu_14_04_binaries/
-    - cd toxcam ; ./toxcam_static :
+    - cp -av tox_tcp_relay/tox_tcp_relay $CIRCLE_ARTIFACTS/ubuntu_14_04_binaries/
+    - cp -av tox_tcp_relay/tox_tcp_relay_static $CIRCLE_ARTIFACTS/ubuntu_14_04_binaries/
+    - cd tox_tcp_relay ; ./tox_tcp_relay_static :
         background: true
     - sleep 10
-    - cd toxcam ; cat ./toxcam.log
-    - cd toxcam ; cat ./toxcam.log | grep '\-\-MyToxID\-\-:' | cut -d':' -f 3
+    - cd tox_tcp_relay ; cat ./tox_tcp_relay.log
+    - cd tox_tcp_relay ; cat ./tox_tcp_relay.log | grep '\-\-MyToxID\-\-:' | cut -d':' -f 3
     - sleep 10
     #- sleep 240
-    - cd toxcam ; cat ./toxcam.log
+    - cd tox_tcp_relay ; cat ./tox_tcp_relay.log
