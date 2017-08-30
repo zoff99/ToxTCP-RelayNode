@@ -30,4 +30,4 @@ cat tox-bootstrapd.log | grep 'Public Key:' # !to see the publickey!
 test if your node is working on this webpage:
 https://nodes.tox.chat/test
 
-<img src="https://github.com/zoff99/ToxTCP-RelayNode/blob/master/toxstatus.png" width="250">
+<img src="https://github.com/zoff99/ToxTCP-RelayNode/blob/master/toxstatus.png" width="450">
