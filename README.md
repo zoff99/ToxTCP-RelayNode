@@ -21,5 +21,8 @@ chmod a+rwx *.sh tox-bootstrapd*
 cd ToxTCP-RelayNode
 cd tox_tcp_relay
 ./loop_services.sh &
+sleep 3
+cat tox-bootstrapd.log | grep 'Public Key:' # !to see own publickey!
 ```
+
 
