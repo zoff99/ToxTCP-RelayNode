@@ -22,7 +22,9 @@ cd ToxTCP-RelayNode
 cd tox_tcp_relay
 ./loop_services.sh &
 sleep 3
-cat tox-bootstrapd.log | grep 'Public Key:' # !to see own publickey!
+cat tox-bootstrapd.log | grep 'Public Key:' # !to see the publickey!
 ```
 
+test if your node is working on this webpage:
+https://nodes.tox.chat/test
 
