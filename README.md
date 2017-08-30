@@ -11,7 +11,7 @@ run a TCP-Relay Node for Tox
 git clone https://github.com/zoff99/ToxTCP-RelayNode
 cd ToxTCP-RelayNode
 cd tox_tcp_relay
-chmod a+rwx *.sh tox_tcp_relay*
+chmod a+rwx *.sh tox-bootstrapd*
 ./update_from_ci.sh
 ```
 
