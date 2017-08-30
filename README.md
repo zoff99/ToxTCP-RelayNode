@@ -13,6 +13,7 @@ cd ToxTCP-RelayNode
 cd tox_tcp_relay
 chmod a+rwx *.sh tox-bootstrapd*
 ./update_from_ci.sh
+chmod a+rwx *.sh tox-bootstrapd*
 ```
 
 ### Operation (Linux)
