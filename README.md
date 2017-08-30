@@ -30,4 +30,12 @@ cat tox-bootstrapd.log | grep 'Public Key:' # !to see the publickey!
 test if your node is working on this webpage:
 https://nodes.tox.chat/test
 
+```
+Public key --> the Public key from the logfile (see above)
+IP:Port    --> the public external IP address of your Server, the Port=33447 (for TCP) and Port=33446 (for UDP)
+UDP / TCP  --> select the Protocol you want to Test (both should work)
+```
+
+
+
 <img src="https://github.com/zoff99/ToxTCP-RelayNode/blob/master/toxstatus.png" width="450">
