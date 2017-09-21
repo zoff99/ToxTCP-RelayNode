@@ -115,6 +115,7 @@ dependencies:
       libtoxcrypto.a -lsodium -lpthread -lrt
       -Wl,-rpath,/home/ubuntu/ToxTCP-RelayNode/c-toxcore:/usr/local/lib
     - cd c-toxcore/ ; cp -av tox-bootstrapd_static $CIRCLE_ARTIFACTS/ubuntu_14_04_binaries/
+    - cd c-toxcore/ ; ldd tox-bootstrapd_static ; exit 0
     - export INSTALL_DEST=/home/ubuntu/installdest_linux/ ; cd "$INSTALL_DEST" ; tar -czvf $CIRCLE_ARTIFACTS/ubuntu_14_04_binaries/pkg_c-toxcore.tar.gz *
     ## --- now again to save the artefact ---
     ### ------------ run tests
@@ -196,6 +197,14 @@ dependencies:
     - . ~/pp;~/do_compile.sh "c-toxcore" --prefix="$_SYSROOT_"/usr --enable-logging --enable-daemon --disable-soname-versions --host="$_TOOL_PREFIX" --with-sysroot="$_SYSROOT_" --disable-testing --disable-rt ; exit 0 # this will fail
     - . ~/pp; cd /home/ubuntu/build/build ; export V=3 ; /bin/bash ../libtool --tag=CC --mode=link $CC -std=gnu99 -I/home/ubuntu/src//c-toxcore/other/bootstrap_daemon -I"$_SYSROOT_"/usr/include -g -O2 -o tox-bootstrapd ../other/bootstrap_daemon/src/tox_bootstrapd-command_line_arguments.o ../other/bootstrap_daemon/src/tox_bootstrapd-config.o ../other/bootstrap_daemon/src/tox_bootstrapd-log.o ../other/bootstrap_daemon/src/tox_bootstrapd-tox-bootstrapd.o ../other/tox_bootstrapd-bootstrap_node_packets.o libtoxcore.la -L"$_SYSROOT_"/usr/lib -L"$_SYSROOT_"/usr/lib/arm-linux-gnueabihf -lconfig -lsodium ; exit 0
     - ls -al /home/ubuntu/build/build/.libs/tox-bootstrapd ; exit 0
+    
+      # -- move some lib files for ldd to correctly show output --
+    - cd ../ ; cd /home/ubuntu/build/build ; . ~/pp ; sed -i -e 's#ld_library_path="/lib:/usr/lib"#ld_library_path="/lib:/usr/lib:/lib/arm-linux-gnueabihf"#' /home/ubuntu/cc/tools/arm-bcm2708/arm-rpi-4.9.3-linux-gnueabihf/bin/arm-linux-gnueabihf-ldd ; exit 0
+    - cd ../ ; cd /home/ubuntu/build/build ; . ~/pp ; export CT_XLDD_VERBOSE=""; arm-linux-gnueabihf-ldd -s --root $_SYSROOT_ /home/ubuntu/build/build/.libs/tox-bootstrapd ; exit 0
+    # -- move some lib files for ldd to correctly show output --
+
+    
+    
     - file /home/ubuntu/build/build/.libs/tox-bootstrapd ; exit 0
     # --- toxbootstrapd for RASPI ----
     
