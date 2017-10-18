@@ -1,6 +1,6 @@
 # Tox TCP-Relay Node
 
-run a TCP-Relay Node for Tox
+run a TCP-Relay/Bootstrap Node for Tox
 
 ### Build Status
 
